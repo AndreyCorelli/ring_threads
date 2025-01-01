@@ -54,6 +54,66 @@ def draw_antialiased_line(
         y += gradient
 
 
+def get_line_rel_intensity(
+    m: np.ndarray,
+    a: Tuple[int, int],
+    b: Tuple[int, int],
+) -> float:
+    """
+    Sums all (weighted) intensities of the cells crossed by the line from point a to point b.
+    Divides the sum by the number of cells crossed by the line.
+
+    Parameters:
+        m (np.ndarray): The matrix to draw the line on (2D array of floats).
+        a (Tuple[int, int]): Starting point of the line (x1, y1).
+        b (Tuple[int, int]): Ending point of the line (x2, y2).
+    """
+    x1, y1 = a
+    x2, y2 = b
+
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+    steep = dy > dx
+
+    if steep:
+        # Transpose line if it is steep
+        x1, y1 = y1, x1
+        x2, y2 = y2, x2
+        dx, dy = dy, dx
+
+    if x1 > x2:
+        # Ensure left-to-right drawing
+        x1, x2 = x2, x1
+        y1, y2 = y2, y1
+
+    gradient = (y2 - y1) / (x2 - x1) if dx != 0 else 0
+    y = y1
+
+    cells_count, intensity = 0.0, 0.0
+
+    for x in range(x1, x2 + 1):
+        y_int = int(y)
+        frac = y - y_int
+        frac_rem = 1 - frac
+
+        if frac_rem:
+            if 0 <= y_int < m.shape[0] and 0 <= x < m.shape[1]:
+                intensity += m[y_int, x] * frac_rem
+                cells_count += frac_rem
+
+        if frac:
+            if 0 <= y_int + 1 < m.shape[0] and 0 <= x < m.shape[1]:
+                intensity += m[y_int + 1, x] * frac
+                cells_count += frac
+
+        y += gradient
+
+    if not cells_count:
+        return 0.0
+
+    return intensity / cells_count
+
+
 def print_matrix_1_channel(m: np.ndarray) -> None:
     print()
     for row in m:

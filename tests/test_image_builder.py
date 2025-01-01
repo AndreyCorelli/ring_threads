@@ -1,4 +1,5 @@
-from app.image_builder import ImageSettings, ImageBuilder
+from app.stochastic_image_builder import StochasticImageBuilder
+from app.image_settings import ImageSettings
 from app.path_utils import IMG_DIR
 
 
@@ -11,5 +12,5 @@ def test_build_image():
     settings.threads_in_iteration = 200
     settings.thread_intensity = 0.5
 
-    builder = ImageBuilder(img_path, settings)
+    builder = StochasticImageBuilder(img_path, settings)
     builder.build()
