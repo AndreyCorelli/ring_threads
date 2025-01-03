@@ -1,6 +1,11 @@
+from typing import List
+
 import numpy as np
 from PIL import Image, ImageEnhance, ImageDraw
 from PIL.Image import Resampling
+from scipy.ndimage import sobel
+
+from app.constants import ImageFilters
 
 
 def preprocess_image(
@@ -8,7 +13,8 @@ def preprocess_image(
         output_path: str,
         target_size: int = 0,
         brightness: float = 1.0,
-        contrast: float = 1.0) -> None:
+        contrast: float = 1.0,
+        filters: List[ImageFilters] = []) -> None:
     """
     Processes an image by performing the following steps:
     1. Loads an image from a file.
@@ -24,6 +30,7 @@ def preprocess_image(
         target_size: Size of the output image (default is 0).
         brightness (float): Brightness adjustment factor (default is 1.0).
         contrast (float): Contrast adjustment factor (default is 1.0).
+        filters (ImageFilters): image filters to apply (default is []).
     """
     # Step 1: Load the image
     image = Image.open(input_path)
@@ -49,6 +56,12 @@ def preprocess_image(
         enhancer = ImageEnhance.Contrast(image)
         image = enhancer.enhance(contrast)
 
+    if ImageFilters.Sobel in filters:
+        # - apply Sobel filter to the image and invert it
+        image = apply_sobel_filter(image)
+        # invert
+        image = Image.fromarray(255 - np.array(image))
+
     # Step 5: Mask out the area outside the central circle
     mask = Image.new("L", (square_size, square_size), color=0)
     draw = ImageDraw.Draw(mask)
@@ -62,6 +75,26 @@ def preprocess_image(
 # Example usage:
 # preprocess_image("input.png", "output.png", brightness=1.2, contrast=0.8)
 
+def apply_sobel_filter(image: Image) -> Image:
+    image_array = np.array(image)
+
+    # Ensure the image is grayscale (2D array)
+    if image_array.ndim == 3:  # Convert RGB to grayscale if needed
+        image_array = image_array.mean(axis=2)
+
+    # Apply the Sobel filter along the x and y axes
+    sobel_x = sobel(image_array, axis=1)  # Horizontal edges
+    sobel_y = sobel(image_array, axis=0)  # Vertical edges
+
+    # Combine the Sobel filtered results to get the edge magnitude
+    sobel_magnitude = np.hypot(sobel_x, sobel_y)
+
+    # Normalize the result to the range [0, 1] for visualization
+    sobel_magnitude = (sobel_magnitude / np.max(sobel_magnitude)) if np.max(sobel_magnitude) > 0 else sobel_magnitude
+
+    # Convert the result back to an image for visualization
+    sobel_image = Image.fromarray((sobel_magnitude * 255).astype(np.uint8))
+    return sobel_image
 
 def image_to_normalized_array(image_path: str) -> np.ndarray:
     """

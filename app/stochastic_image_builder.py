@@ -37,7 +37,8 @@ class StochasticImageBuilder:
 
     def build(self):
         preprocess_image(self.orig_path, self.preproc_path,
-                         self.settings.size, self.settings.brightness, self.settings.contrast)
+                         self.settings.size, self.settings.brightness,
+                         self.settings.contrast, self.settings.filters)
         self.target_matrix = image_to_normalized_array(self.preproc_path)
         self.target_matrix = 1.0 - self.target_matrix  # invert the image
         self.matrix: np.array = np.zeros((self.size, self.size))

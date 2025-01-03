@@ -1,3 +1,8 @@
+from typing import List
+
+from app.constants import ImageFilters
+
+
 class ImageSettings:
     def __init__(
             self,
@@ -9,11 +14,13 @@ class ImageSettings:
             max_threads: int = 0,
             thread_intensity: float = 0.6,
             threads_in_iteration: int = 0,
-            min_pin_distance: int = 5,):
+            min_pin_distance: int = 5,
+            filters: List[ImageFilters] = []):
         self.size = size
         self.brightness = brightness
         self.contrast = contrast
         self.pins = pins
+        self.filters = filters
 
         if not min_threads:
             min_threads = int(round(pins**1.33))

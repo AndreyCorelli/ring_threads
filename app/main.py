@@ -57,8 +57,8 @@ def build_test_image_settings_04():
 
 
 def build_test_image_settings_05():
-    img_path = IMG_DIR + "/guinea_orig.jpg"
-    settings = ImageSettings(size=300, brightness=1.0, contrast=1.6)
+    img_path = IMG_DIR + "/ringed.png"
+    settings = ImageSettings(size=400, brightness=1.0, contrast=1.2)
     settings.pins = 240
     settings.min_threads = 3054
     settings.max_threads = 3054
@@ -109,7 +109,7 @@ def build_test_image_settings_07():
 
 
 def build_test_sorted_02():
-    img_path = IMG_DIR + "/2.png"
+    img_path = IMG_DIR + "/guinea_2.jpeg"
     settings = ImageSettings(size=700, brightness=1.0, contrast=1.2)
     settings.pins = 240
     settings.min_threads = 2100
