@@ -1,5 +1,7 @@
 import numpy as np
-from typing import Tuple
+from typing import Tuple, List
+
+from app.constants import Coord
 
 
 def draw_antialiased_line(
@@ -120,3 +122,41 @@ def print_matrix_1_channel(m: np.ndarray) -> None:
         for cell in row:
             print(f"{cell:.1f}", end=" ")
         print()
+
+
+def get_connecting_points_coords(a: Coord, b: Tuple[int, int]) -> List[Tuple[int, int]]:
+    """
+    Calculate all points connecting two coordinates (a and b) using the Bresenham algorithm.
+
+    Args:
+        a (Tuple[int, int]): Starting point (x1, y1).
+        b (Tuple[int, int]): Ending point (x2, y2).
+
+    Returns:
+        List[Tuple[int, int]]: List of all points on the line from a to b.
+    """
+    x1, y1 = a
+    x2, y2 = b
+
+    points = []
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+
+    sx = 1 if x1 < x2 else -1
+    sy = 1 if y1 < y2 else -1
+
+    err = dx - dy
+
+    while True:
+        points.append((x1, y1))
+        if (x1, y1) == (x2, y2):
+            break
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x1 += sx
+        if e2 < dx:
+            err += dx
+            y1 += sy
+
+    return points

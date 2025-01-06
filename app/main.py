@@ -2,6 +2,7 @@ from app.image_builder import ImageBuilder
 from app.stochastic_image_builder import StochasticImageBuilder
 from app.image_settings import ImageSettings
 from app.path_utils import IMG_DIR
+from app.string_diff_image_builder import StringDiffImageBuilder
 
 
 def build_test_image_settings_01():
@@ -121,5 +122,18 @@ def build_test_sorted_02():
     builder.build()
 
 
+def build_string_diff_image_settings_01():
+    img_path = IMG_DIR + "/guinea_2.jpeg"
+    settings = ImageSettings(size=100, brightness=1.0, contrast=1.2)
+    settings.pins = 240
+    settings.min_threads = 3000
+    settings.max_threads = 3000
+    settings.threads_in_iteration = 1200
+    settings.thread_intensity = 0.3
+
+    builder = StringDiffImageBuilder(img_path, settings)
+    builder.build()
+
+
 if __name__ == "__main__":
-    build_test_image_settings_05()
+    build_string_diff_image_settings_01()

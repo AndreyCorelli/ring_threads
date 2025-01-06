@@ -6,11 +6,10 @@ from typing import List, Tuple, Optional
 import numpy as np
 from PIL import Image
 
+from app.constants import Coord
 from app.graph_utils import draw_antialiased_line
 from app.image_settings import ImageSettings
 from app.image_utils import preprocess_image, image_to_normalized_array
-
-Coord = tuple[int, int]
 
 # NB: my laptop has 8 logical cores (sysctl -n hw.logicalcpu)
 THREAD_COUNT = 6
